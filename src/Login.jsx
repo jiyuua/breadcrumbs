@@ -2,15 +2,15 @@ import { useRef, useState, useEffect, useContext } from "react";
 import { Link } from "react-router";
 import { AuthContext } from "./context/AuthContext";
 import axios from "./api/axios";
-// change to match to backend later
-const LOGIN_URL = "/auth";
+
+const LOGIN_URL = "/auth/login";
 
 const Login = () => {
    const { setAuth } = useContext(AuthContext);
    const userRef = useRef();
    const errRef = useRef();
 
-   const [user, setUser] = useState("");
+   const [email, setEmail] = useState("");
    const [password, setPassword] = useState("");
    const [errorMsg, setErrorMsg] = useState("");
 
@@ -26,21 +26,21 @@ const Login = () => {
       try {
          const response = await axios.post(
             LOGIN_URL,
-            JSON.stringify({ user, password }),
+            { email, password },
+            { withCredentials: true },
             {
                headers: { "Content-Type": "application/json" },
                withCredentials: true,
             },
          );
-         const accessToken = response?.data?.accessToken;
-         setAuth({ user, accessToken });
-         setUser("");
+         setAuth({ user: response.data.user });
+         setEmail("");
          setPassword("");
       } catch (error) {
          if (!error?.response) {
             setErrorMsg("No Server Response");
          } else if (error.response?.status === 400) {
-            setErrorMsg("Missing Username or Password");
+            setErrorMsg("Missing Email or Password");
          } else if (error.response?.status === 401) {
             setErrorMsg("Unauthorized");
          } else {
@@ -62,17 +62,17 @@ const Login = () => {
          <h1>Log In</h1>
 
          <form onSubmit={handleSubmit}>
-            <label htmlFor="username">Username</label>
+            <label htmlFor="email">Email</label>
             <input
-               type="text"
-               id="username"
+               type="email"
+               id="email"
                ref={userRef}
-               autoComplete="off"
+               autoComplete="email"
                onChange={(e) => {
-                  setUser(e.target.value);
+                  setEmail(e.target.value);
                   setErrorMsg("");
                }}
-               value={user}
+               value={email}
                required
             />
 
@@ -94,7 +94,7 @@ const Login = () => {
             <p>
                New to Breadcrumbs?
                <span>
-                  <Link to="/Signup">Sign up</Link>;
+                  <Link to="/signup">Sign up</Link>;
                </span>
             </p>
          </div>
