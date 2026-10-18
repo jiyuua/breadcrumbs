@@ -12,4 +12,19 @@ model User {
   email        String   @unique
   passwordHash String
   createdAt    DateTime @default(now())
+
+  preferences UserPreference?
+}
+
+model UserPreference {
+  id                Int      @id @default(autoincrement())
+  userId            Int      @unique
+  budget            Int?
+  interests         String[] @default([])
+  boroughs          String[] @default([])
+  transportation    String?
+  availableHours    Int?
+  maxTravelMinutes  Int?
+
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
