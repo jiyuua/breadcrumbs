@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Breadcrumbs | NYC Travel Guide</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#home" aria-label="Breadcrumbs home">
+      <span class="brand-mark">✦</span>
+      <span>Breadcrumbs</span>
+    </a>
+
+    <button class="menu-button" id="menuButton" aria-label="Open navigation" aria-expanded="false">☰</button>
+
+    <nav class="main-nav" id="mainNav">
+      <a class="active" href="#home">Home</a>
+      <a href="#features">Features</a>
+      <a href="#about">About</a>
+      <a href="#blog">Blog</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="icon-button" aria-label="Search">⌕</button>
+      <button class="btn btn-light">Log In</button>
+      <button class="btn btn-primary">Sign Up</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-copy">
+        <p class="eyebrow">EXPLORE &nbsp;•&nbsp; PLAN &nbsp;•&nbsp; GO TOGETHER &nbsp;•&nbsp; REMEMBER</p>
+        <h1>Find your way<br />through NYC</h1>
+        <p class="hero-description">
+          Discover amazing places, build personalized itineraries, explore with friends,
+          and save your favorite memories — all in one app.
+        </p>
+
+        <div class="hero-actions">
+          <button class="btn btn-primary btn-large">Sign Up <span>→</span></button>
+          <button class="btn btn-light btn-large">Log In</button>
+          <button class="demo-button" id="demoButton">
+            <span class="play">▶</span>
+            Explore Demo
+          </button>
+        </div>
+
+        <div class="community-row">
+          <div class="avatar-stack" aria-hidden="true">
+            <span class="avatar avatar-1"></span>
+            <span class="avatar avatar-2"></span>
+            <span class="avatar avatar-3"></span>
+            <span class="avatar avatar-4"></span>
+            <span class="avatar avatar-5"></span>
+          </div>
+          <p>Join a community of<br /><strong>10K+ travelers</strong> exploring NYC together.</p>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <img class="hero-background" src="assets/hero-background.png" alt="Brooklyn Bridge and Manhattan skyline at sunset" />
+        <div class="hero-gradient"></div>
+
+        <p class="trail-note">Same City<br />New Stories<br />Always a Good Trail</p>
+        <div class="trail-line" aria-hidden="true"></div>
+
+        <article class="floating-card dumbo-card">
+          <img src="assets/dumbo.png" alt="DUMBO neighborhood and Manhattan Bridge" />
+          <div>
+            <strong>DUMBO</strong>
+            <span>Scenic views · Cafés · Art</span>
+          </div>
+        </article>
+
+        <article class="floating-card levain-card">
+          <img src="assets/levain.png" alt="Levain Bakery cookies" />
+          <div>
+            <strong>Levain Bakery</strong>
+            <span>Upper West Side · 0.8 mi</span>
+            <span>Iconic cookies worth the hype.</span>
+            <span class="rating">★ 4.8 (2.1K)</span>
+          </div>
+        </article>
+
+        <div class="phone">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="phone-brand"><span>✦</span> Breadcrumbs</div>
+            <div class="phone-search">Search places, neighborhoods, or vibes...</div>
+
+            <div class="phone-categories">
+              <span>🍴<small>Food</small></span>
+              <span>☕<small>Coffee</small></span>
+              <span>✧<small>Things to do</small></span>
+              <span>△<small>Views</small></span>
+              <span>•••<small>More</small></span>
+            </div>
+
+            <div class="phone-map-wrap">
+              <img src="assets/phone-map.png" alt="Map preview of New York City" />
+              <span class="map-pin pin-one"></span>
+              <span class="map-pin pin-two"></span>
+              <span class="map-pin pin-three"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sticky sticky-one">Explore<br />Together</div>
+        <div class="sticky sticky-two">More<br />Breadcrumbs<br />Please.</div>
+      </div>
+    </section>
+
+    <section class="features" id="features">
+      <article class="feature-column discover-column">
+        <div class="feature-heading">
+          <div class="feature-icon gold">⌖</div>
+          <div>
+            <h2>Discover</h2>
+            <p>Find the best food, sights, hidden gems, and local favorites across NYC.</p>
+          </div>
+        </div>
+
+        <div class="place-grid">
+          <article class="place-card">
+            <img src="assets/banter.png" alt="Banter restaurant interior" />
+            <h3>Banter</h3>
+            <p>Greenwich Village</p>
+            <span>★ 4.7</span>
+          </article>
+
+          <article class="place-card">
+            <img src="assets/highline.png" alt="The High Line in New York City" />
+            <h3>The High Line</h3>
+            <p>Chelsea</p>
+            <span>★ 4.8</span>
+          </article>
+
+          <article class="place-card">
+            <img src="assets/times-square.png" alt="Times Square at night" />
+            <h3>Times Square</h3>
+            <p>Midtown</p>
+            <span>★ 4.5</span>
+          </article>
+        </div>
+      </article>
+
+      <article class="feature-column plan-column">
+        <div class="feature-heading">
+          <div class="feature-icon teal">●●</div>
+          <div>
+            <h2>Plan Together</h2>
+            <p>Build itineraries with friends, share places, and make the most of your time in the city.</p>
+          </div>
+        </div>
+
+        <div class="itinerary-card">
+          <div class="itinerary-header">
+            <div>
+              <h3>NYC Weekend Trip</h3>
+              <p>Apr 12 – Apr 14</p>
+            </div>
+            <div class="mini-avatars"><span></span><span></span><span></span><b>+2</b></div>
+          </div>
+
+          <ol class="itinerary-list">
+            <li><span class="step-thumb sand"></span><div><strong>Breakfast at Sadelle's</strong><small>9:00 AM · SoHo</small></div></li>
+            <li><span class="step-thumb sage"></span><div><strong>Walk the High Line</strong><small>11:00 AM · Chelsea</small></div></li>
+            <li><span class="step-thumb taupe"></span><div><strong>Explore DUMBO</strong><small>2:00 PM · Brooklyn</small></div></li>
+          </ol>
+        </div>
+      </article>
+
+      <article class="feature-column memories-column">
+        <div class="feature-heading">
+          <div class="feature-icon gold">▣</div>
+          <div>
+            <h2>Save Memories</h2>
+            <p>Keep your favorite spots, photos, and moments all in one place.</p>
+          </div>
+        </div>
+
+        <div class="memory-collage">
+          <img class="memory memory-one" src="assets/memory-dumbo.png" alt="DUMBO memory" />
+          <img class="memory memory-two" src="assets/memory-coffee.png" alt="Coffee memory" />
+          <img class="memory memory-three" src="assets/memory-skyline.png" alt="NYC skyline memory" />
+          <div class="memory-note">NYC<br />Hits Different ♡</div>
+        </div>
+      </article>
+    </section>
+
+    <section class="simple-section" id="about">
+      <p class="eyebrow">ABOUT BREADCRUMBS</p>
+      <h2>One place to discover, plan, explore, and remember New York.</h2>
+    </section>
+
+    <section class="simple-section" id="blog">
+      <p class="eyebrow">BLOG</p>
+      <h2>Travel stories and NYC recommendations are coming soon.</h2>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand footer-brand" href="#home"><span class="brand-mark">✦</span> Breadcrumbs</a>
+    <p>Capstone project · Personalized NYC travel guide</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
