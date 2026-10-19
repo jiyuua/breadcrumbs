@@ -21,17 +21,11 @@ const Login = () => {
    const handleSubmit = async (e) => {
       e.preventDefault();
 
-      // connect to database
-
       try {
          const response = await axios.post(
             LOGIN_URL,
             { email, password },
             { withCredentials: true },
-            {
-               headers: { "Content-Type": "application/json" },
-               withCredentials: true,
-            },
          );
          setAuth({ user: response.data.user });
          setEmail("");
@@ -94,7 +88,7 @@ const Login = () => {
             <p>
                New to Breadcrumbs?
                <span>
-                  <Link to="/signup">Sign up</Link>;
+                  <Link to="/signup">Sign up</Link>
                </span>
             </p>
          </div>
