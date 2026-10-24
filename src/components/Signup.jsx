@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router";
-import axios from "./api/axios";
+import axios from "../api/axios";
 
 const USER_REGEX = /^[A-Za-z][A-Za-z0-9-_]{3,23}$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
