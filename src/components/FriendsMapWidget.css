@@ -1,0 +1,151 @@
+
+/* BREADCRUMBS — INTERACTIVE FRIENDS MAP */
+
+.bp-page .bfm-widget {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(230px, 0.6fr);
+  gap: 20px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+
+.bp-page .bfm-map {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 440px;
+  min-height: 440px;
+  overflow: hidden;
+  border: 1px solid #e7e1d7;
+  border-radius: 18px;
+  background: #dfe9e4;
+}
+
+.bp-page .bfm-map .leaflet-container {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 440px;
+  z-index: 0;
+}
+
+.bp-page .bfm-map .leaflet-container {
+  width: 100%;
+  height: 100%;
+  font-family: "Inter", Arial, sans-serif;
+  z-index: 0;
+}
+
+.bp-page .bfm-friends {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.bp-page .bfm-friends-heading h3 {
+  margin: 0 0 6px;
+  color: #263d36;
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: 25px;
+  font-weight: 400;
+}
+
+.bp-page .bfm-friends-heading p {
+  margin: 0 0 12px;
+  color: #8b8176;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.bp-page .bfm-friend {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #e9e3d8;
+  border-radius: 14px;
+  background: #fffdf9;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.bp-page .bfm-friend:hover,
+.bp-page .bfm-friend.selected {
+  background: #e8efe6;
+  border-color: #a9c1b1;
+}
+
+.bp-page .bfm-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  border: 3px solid white;
+  border-radius: 50%;
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.bp-page .bfm-friend-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.bp-page .bfm-friend-info strong {
+  color: #263d36;
+  font-size: 13px;
+}
+
+.bp-page .bfm-friend-info small {
+  color: #847d73;
+  font-size: 11px;
+}
+
+.bp-page .bfm-arrow {
+  margin-left: auto;
+  color: #315f60;
+  font-size: 18px;
+}
+
+.bp-page .bfm-show-all {
+  margin-top: 5px;
+  padding: 12px;
+  border: 0;
+  border-radius: 12px;
+  background: #315f60;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bp-page .bfm-disclaimer {
+  margin-top: 12px;
+  color: #958a7c;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+/* Mobile */
+@media (max-width: 800px) {
+  .bp-page .bfm-widget {
+    grid-template-columns: 1fr;
+  }
+
+  .bp-page .bfm-map {
+    height: 350px;
+  }
+}
+
+@media (max-width: 440px) {
+  .bp-page .bfm-map {
+    height: 300px;
+  }
+}
