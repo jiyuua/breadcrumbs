@@ -25,17 +25,11 @@ const Login = () => {
    const handleSubmit = async (e) => {
       e.preventDefault();
 
-      // connect to database
-
       try {
          const response = await axios.post(
             LOGIN_URL,
             { email, password },
             { withCredentials: true },
-            {
-               headers: { "Content-Type": "application/json" },
-               withCredentials: true,
-            },
          );
          setAuth({ user: response.data.user });
          setEmail("");
@@ -56,153 +50,149 @@ const Login = () => {
 
    return (
       <main className="breadcrumbs-login">
-      <section className="login-hero">
-        <img
-          className="hero-photo"
-          src={nycSunset}
-          alt="New York City skyline at sunset"
-        />
+         <section className="login-hero">
+            <img
+               className="hero-photo"
+               src={nycSunset}
+               alt="New York City skyline at sunset"
+            />
 
-        <div className="sticky-note note-explore">
-          Explore<br />together
-        </div>
-
-        <div className="sticky-note note-plan">
-          Plan<br />easier
-        </div>
-
-        <div className="sticky-note note-memories">
-          Make<br />memories
-        </div>
-
-        <div className="hero-caption">
-          Your next NYC adventure starts here ✦
-        </div>
-      </section>
-
-      <section className="login-card">
-        <div className="nyc-emblem" aria-hidden="true">
-          ✦ NYC ✦
-        </div>
-
-        <div className="login-inner">
-          <p className="login-eyebrow">WELCOME BACK TO</p>
-
-          <h1 className="login-brand">
-            Breadcrumbs <span>✦</span>
-          </h1>
-
-          <p className="login-description">
-            Log in to continue planning, exploring,
-            <br className="desktop-only" />
-            and making memories in NYC.
-          </p>
-
-          <p
-            ref={errRef}
-            className={errorMsg ? "login-error" : "login-error hidden"}
-            role="alert"
-            tabIndex="-1"
-          >
-            {errorMsg}
-          </p>
-
-          <form className="login-form" onSubmit={handleSubmit}>
-            <label className="login-input">
-              <span aria-hidden="true">✉</span>
-              <input
-                type="email"
-                ref={userRef}
-                autoComplete="email"
-                placeholder="Email address"
-                aria-label="Email address"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setErrorMsg("");
-                }}
-                required
-              />
-            </label>
-
-            <label className="login-input">
-              <span aria-hidden="true">♙</span>
-              <input
-                type={showPassword ? "text" : "password"}
-                autoComplete="current-password"
-                placeholder="Password"
-                aria-label="Password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setErrorMsg("");
-                }}
-                required
-              />
-              <button
-                type="button"
-                className="password-toggle"
-                onClick={() => setShowPassword((current) => !current)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? "Hide" : "Show"}
-              </button>
-            </label>
-
-            <div className="login-options">
-              <label className="remember-me">
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                />
-                Remember me
-              </label>
-
-              <a href="#forgot-password">Forgot password?</a>
+            <div className="sticky-note note-explore">
+               Explore
+               <br />
+               together
             </div>
 
-            <button className="login-submit" type="submit">
-              Log In <span aria-hidden="true">→</span>
-            </button>
-          </form>
+            <div className="sticky-note note-plan">
+               Plan
+               <br />
+               easier
+            </div>
 
-          <div className="login-divider">
-            <span />
-            OR
-            <span />
-          </div>
+            <div className="sticky-note note-memories">
+               Make
+               <br />
+               memories
+            </div>
 
-          <div className="social-login">
-            <button
-              type="button"
-              onClick={() =>
-                alert("Google sign-in has not been connected yet.")
-              }
-            >
-              <span className="google-icon">G</span>
-              Continue with Google
-            </button>
+            <div className="hero-caption">Your next NYC adventure starts here ✦</div>
+         </section>
 
-            <button
-              type="button"
-              onClick={() =>
-                alert("Apple sign-in has not been connected yet.")
-              }
-            >
-              <span className="apple-icon">●</span>
-              Continue with Apple
-            </button>
-          </div>
+         <section className="login-card">
+            <div className="nyc-emblem" aria-hidden="true">
+               ✦ NYC ✦
+            </div>
 
-          <p className="signup-text">
-            Don’t have an account?{" "}
-            <Link to="/signup">Sign Up →</Link>
-          </p>
-        </div>
-      </section>
-    </main>
-  );
+            <div className="login-inner">
+               <p className="login-eyebrow">WELCOME BACK TO</p>
+
+               <h1 className="login-brand">
+                  Breadcrumbs <span>✦</span>
+               </h1>
+
+               <p className="login-description">
+                  Log in to continue planning, exploring,
+                  <br className="desktop-only" />
+                  and making memories in NYC.
+               </p>
+
+               <p
+                  ref={errRef}
+                  className={errorMsg ? "login-error" : "login-error hidden"}
+                  role="alert"
+                  tabIndex="-1">
+                  {errorMsg}
+               </p>
+
+               <form className="login-form" onSubmit={handleSubmit}>
+                  <label className="login-input">
+                     <span aria-hidden="true">✉</span>
+                     <input
+                        type="email"
+                        ref={userRef}
+                        autoComplete="email"
+                        placeholder="Email address"
+                        aria-label="Email address"
+                        value={email}
+                        onChange={(e) => {
+                           setEmail(e.target.value);
+                           setErrorMsg("");
+                        }}
+                        required
+                     />
+                  </label>
+
+                  <label className="login-input">
+                     <span aria-hidden="true">♙</span>
+                     <input
+                        type={showPassword ? "text" : "password"}
+                        autoComplete="current-password"
+                        placeholder="Password"
+                        aria-label="Password"
+                        value={password}
+                        onChange={(e) => {
+                           setPassword(e.target.value);
+                           setErrorMsg("");
+                        }}
+                        required
+                     />
+                     <button
+                        type="button"
+                        className="password-toggle"
+                        onClick={() => setShowPassword((current) => !current)}
+                        aria-label={showPassword ? "Hide password" : "Show password"}>
+                        {showPassword ? "Hide" : "Show"}
+                     </button>
+                  </label>
+
+                  <div className="login-options">
+                     <label className="remember-me">
+                        <input
+                           type="checkbox"
+                           checked={rememberMe}
+                           onChange={(e) => setRememberMe(e.target.checked)}
+                        />
+                        Remember me
+                     </label>
+
+                     <a href="#forgot-password">Forgot password?</a>
+                  </div>
+
+                  <button className="login-submit" type="submit">
+                     Log In <span aria-hidden="true">→</span>
+                  </button>
+               </form>
+
+               <div className="login-divider">
+                  <span />
+                  OR
+                  <span />
+               </div>
+
+               <div className="social-login">
+                  <button
+                     type="button"
+                     onClick={() => alert("Google sign-in has not been connected yet.")}>
+                     <span className="google-icon">G</span>
+                     Continue with Google
+                  </button>
+
+                  <button
+                     type="button"
+                     onClick={() => alert("Apple sign-in has not been connected yet.")}>
+                     <span className="apple-icon">●</span>
+                     Continue with Apple
+                  </button>
+               </div>
+
+               <p className="signup-text">
+                  Don’t have an account?
+                  <Link to="/signup">Sign Up →</Link>
+               </p>
+            </div>
+         </section>
+      </main>
+   );
 };
 
 export default Login;
