@@ -1,245 +1,457 @@
+
 import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router";
 import axios from "../api/axios";
+import "./Signup.css";
 
 const USER_REGEX = /^[A-Za-z][A-Za-z0-9-_]{3,23}$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+const PWD_REGEX =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+
 const REGISTERURL = "/auth/register";
 
-const Signup = () => {
-   const userRef = useRef();
-   const errRef = useRef();
+function Signup() {
+  const userRef = useRef(null);
+  const errRef = useRef(null);
 
-   const [name, setName] = useState("");
-   const [nameFocus, setNameFocus] = useState(false);
+  const [name, setName] = useState("");
+  const [nameFocus, setNameFocus] = useState(false);
 
-   const [email, setEmail] = useState("");
-   const [emailFocus, setEmailFocus] = useState(false);
+  const [email, setEmail] = useState("");
+  const [emailFocus, setEmailFocus] = useState(false);
 
-   const [password, setPassword] = useState("");
-   const [passwordFocus, setPasswordFocus] = useState(false);
+  const [password, setPassword] = useState("");
+  const [passwordFocus, setPasswordFocus] = useState(false);
 
-   const [matchPassword, setMatchPassword] = useState("");
-   const [matchFocus, setMatchFocus] = useState(false);
+  const [matchPassword, setMatchPassword] = useState("");
+  const [matchFocus, setMatchFocus] = useState(false);
 
-   const [errorMsg, setErrorMsg] = useState("");
-   const [success, setSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-   // validate name and email
-   const validName = USER_REGEX.test(name);
-   const validEmail = EMAIL_REGEX.test(email);
-   // validate password and match
-   const validPassword = PWD_REGEX.test(password);
-   const validMatch = password === matchPassword;
+  const [errorMsg, setErrorMsg] = useState("");
+  const [success, setSuccess] = useState(false);
 
-   useEffect(() => {
-      userRef.current.focus();
-   }, []);
+  // Preserve the existing validation requirements.
+  const validName = USER_REGEX.test(name);
+  const validEmail = EMAIL_REGEX.test(email);
+  const validPassword = PWD_REGEX.test(password);
+  const validMatch =
+    matchPassword.length > 0 && password === matchPassword;
 
-   const handleSubmit = async (e) => {
-      e.preventDefault();
+  useEffect(() => {
+    userRef.current?.focus();
+  }, []);
 
-      if (!validName || !validEmail || !validPassword || !validMatch) {
-         setErrorMsg("Invalid Entry");
-         return;
-      }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMsg("");
 
-      try {
-         await axios.post(REGISTERURL, { name, email, password });
-         setSuccess(true);
+    if (!validName || !validEmail || !validPassword || !validMatch) {
+      setErrorMsg("Please check your information and try again.");
+      return;
+    }
 
-         // clear fields after submit
-         setName("");
-         setEmail("");
-         setPassword("");
-         setMatchPassword("");
-      } catch (error) {
-         setErrorMsg(
-            error.response?.data?.message ??
-               "Unable to create account. Please try again.",
-         );
-         errRef.current.focus();
-      }
-   };
+    setSubmitting(true);
 
-   return (
-      <section>
-         <p
-            ref={errRef}
-            className={errorMsg ? "errmsg" : "offscreen"}
-            aria-live="assertive"
-            tabIndex={-1}>
-            {errorMsg}
-         </p>
+    try {
+      await axios.post(REGISTERURL, { name, email, password });
 
-         <h1>Sign up</h1>
-         {success ? (
-            <div>
-               <p role="status">Account created successfully!</p>
-               <Link to="/login">Login</Link>
+      setSuccess(true);
+      setName("");
+      setEmail("");
+      setPassword("");
+      setMatchPassword("");
+    } catch (error) {
+      setErrorMsg(
+        error.response?.data?.message ??
+          "Unable to create account. Please try again."
+      );
+      errRef.current?.focus();
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const navItems = [
+    { label: "Home", hash: "home" },
+    { label: "Features", hash: "features" },
+    { label: "About", hash: "about" },
+    { label: "Blog", hash: "blog" },
+  ];
+
+  return (
+    <div className="bc-signup-page">
+      {/* HEADER */}
+      <header className="bc-signup-header">
+        <Link className="bc-signup-logo" to="/">
+          <span aria-hidden="true">✦</span>
+          Breadcrumbs
+        </Link>
+
+        <button
+          className="bc-signup-menu-toggle"
+          type="button"
+          aria-label="Toggle navigation"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((prev) => !prev)}
+        >
+          {menuOpen ? "✕" : "☰"}
+        </button>
+
+        <nav
+          className={`bc-signup-nav ${
+            menuOpen ? "bc-signup-nav-open" : ""
+          }`}
+          aria-label="Main navigation"
+        >
+          {navItems.map((item) => (
+            <Link
+              key={item.hash}
+              to={`/#${item.hash}`}
+              onClick={() => setMenuOpen(false)}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="bc-signup-header-actions">
+          <Link className="bc-signup-login-button" to="/login">
+            Log In
+          </Link>
+
+          <Link
+            className="bc-signup-active-button"
+            to="/signup"
+            aria-current="page"
+          >
+            Sign Up
+          </Link>
+        </div>
+      </header>
+
+      {/* MAIN */}
+      <main className="bc-signup-main">
+        <div className="bc-signup-layout">
+          {/* NYC PHOTO */}
+          <div className="bc-signup-photo">
+            <img
+              src="/assets/sunset.jpg"
+              alt="New York City skyline at sunset"
+            />
+
+            <div className="bc-signup-photo-overlay">
+              <span className="bc-signup-photo-label">
+                YOUR NYC STORY STARTS HERE
+              </span>
+
+              <h2>
+                Find your people.
+                <br />
+                Follow your curiosity.
+              </h2>
+
+              <p>
+                New places, shared adventures, and memories worth
+                keeping.
+              </p>
             </div>
-         ) : (
-            <>
-               <form onSubmit={handleSubmit}>
-                  {/* Name */}
-                  <div className="form-div">
-                     <label htmlFor="name">
-                        Name
-                        <span className={validName ? "valid" : "hide"}>✔️</span>
-                        <span className={validName || !name ? "hide" : "invalid"}>
-                           ❌
-                        </span>
-                     </label>
-                     <input
-                        type="text"
-                        id="name"
+
+            <div className="bc-signup-photo-sticker">
+              New City
+              <br />
+              New Stories ✦
+            </div>
+          </div>
+
+          {/* REGISTRATION FORM */}
+          <section className="bc-signup-form-panel">
+            <div className="bc-signup-form-inner">
+              <div className="bc-signup-intro">
+                <span className="bc-signup-eyebrow">
+                  WELCOME TO YOUR NEXT ADVENTURE
+                </span>
+
+                <h1>
+                  Join Breadcrumbs <span>✦</span>
+                </h1>
+
+                <p>
+                  Create your account and start exploring New York,
+                  one breadcrumb at a time.
+                </p>
+              </div>
+
+              <p
+                ref={errRef}
+                className={
+                  errorMsg
+                    ? "bc-signup-error"
+                    : "bc-signup-visually-hidden"
+                }
+                role={errorMsg ? "alert" : undefined}
+                tabIndex={-1}
+              >
+                {errorMsg}
+              </p>
+
+              {success ? (
+                <div className="bc-signup-success" role="status">
+                  <div className="bc-signup-success-icon">✓</div>
+                  <h2>You're on your way!</h2>
+                  <p>
+                    Your account was created successfully.
+                    Log in to start your NYC adventure.
+                  </p>
+                  <Link
+                    to="/login"
+                    className="bc-signup-submit bc-signup-success-link"
+                  >
+                    Continue to Log In →
+                  </Link>
+                </div>
+              ) : (
+                <>
+                  <form
+                    className="bc-signup-form"
+                    onSubmit={handleSubmit}
+                    noValidate
+                  >
+                    {/* USERNAME */}
+                    <div className="bc-signup-field">
+                      <label htmlFor="signup-name">
+                        Username
+                        {name && validName && (
+                          <span className="bc-signup-valid">
+                            {" "}✓
+                          </span>
+                        )}
+                      </label>
+
+                      <input
+                        id="signup-name"
                         ref={userRef}
-                        autoComplete="off"
-                        onChange={(e) => {
-                           setName(e.target.value);
-                           setErrorMsg("");
-                        }}
+                        type="text"
+                        value={name}
+                        placeholder="Choose a username"
+                        autoComplete="username"
                         required
-                        aria-invalid={name.length > 0 && !validName}
-                        aria-describedby="nameinfo"
+                        aria-invalid={
+                          name.length > 0 && !validName
+                        }
+                        aria-describedby="signup-name-info"
+                        onChange={(e) => {
+                          setName(e.target.value);
+                          setErrorMsg("");
+                        }}
                         onFocus={() => setNameFocus(true)}
                         onBlur={() => setNameFocus(false)}
-                     />
-                     <p
-                        id="nameinfo"
-                        className={
-                           nameFocus && name && !validName ? "instructions" : "offscreen"
-                        }>
-                        At least 4 characters and must begin with a letter.
-                        <br />
-                        Letters, numbers, underscores, hyphens allowed.
-                     </p>
+                      />
 
-                     {/* Email */}
-                     <label htmlFor="email">
-                        Email <span className={validEmail ? "valid" : "hide"}>✔️</span>
-                        <span className={validEmail || !email ? "hide" : "invalid"}>
-                           ❌
-                        </span>
-                     </label>
-                     <input
+                      {nameFocus && name && !validName && (
+                        <p
+                          id="signup-name-info"
+                          className="bc-signup-hint"
+                        >
+                          Use 4–24 characters. Start with a letter.
+                          Letters, numbers, underscores, and
+                          hyphens are allowed.
+                        </p>
+                      )}
+                    </div>
+
+                    {/* EMAIL */}
+                    <div className="bc-signup-field">
+                      <label htmlFor="signup-email">
+                        Email address
+                        {email && validEmail && (
+                          <span className="bc-signup-valid">
+                            {" "}✓
+                          </span>
+                        )}
+                      </label>
+
+                      <input
+                        id="signup-email"
                         type="email"
-                        id="email"
+                        value={email}
+                        placeholder="you@example.com"
                         autoComplete="email"
-                        onChange={(e) => {
-                           setEmail(e.target.value);
-                           setErrorMsg("");
-                        }}
                         required
-                        aria-invalid={email.length > 0 && !validEmail}
-                        aria-describedby="emailinfo"
+                        aria-invalid={
+                          email.length > 0 && !validEmail
+                        }
+                        aria-describedby="signup-email-info"
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          setErrorMsg("");
+                        }}
                         onFocus={() => setEmailFocus(true)}
                         onBlur={() => setEmailFocus(false)}
-                     />
+                      />
 
-                     <p
-                        id="emailinfo"
-                        className={
-                           emailFocus && email && !validEmail
-                              ? "instructions"
-                              : "offscreen"
-                        }>
-                        Email should follow username@domain.tld format
-                     </p>
+                      {emailFocus && email && !validEmail && (
+                        <p
+                          id="signup-email-info"
+                          className="bc-signup-hint"
+                        >
+                          Please enter a valid email address.
+                        </p>
+                      )}
+                    </div>
 
-                     {/* Password  */}
-                     <label htmlFor="password">
+                    {/* PASSWORD */}
+                    <div className="bc-signup-field">
+                      <label htmlFor="signup-password">
                         Password
-                        <span className={validPassword ? "valid" : "hide"}>✔️</span>
-                        <span className={validPassword || !password ? "hide" : "invalid"}>
-                           ❌
-                        </span>
-                     </label>
-                     <input
-                        type="password"
-                        id="password"
-                        onChange={(e) => {
-                           setPassword(e.target.value);
-                           setErrorMsg("");
-                        }}
-                        required
-                        aria-invalid={password.length > 0 && !validPassword}
-                        aria-describedby="passwordinfo"
-                        onFocus={() => setPasswordFocus(true)}
-                        onBlur={() => setPasswordFocus(false)}
-                     />
+                        {password && validPassword && (
+                          <span className="bc-signup-valid">
+                            {" "}✓
+                          </span>
+                        )}
+                      </label>
 
-                     <p
-                        id="passwordinfo"
-                        className={
-                           passwordFocus && !validPassword ? "instructions" : "offscreen"
-                        }>
-                        At least 8 characters long and must include uppercase and
-                        lowercase letters, a number and a special character.
-                        <br />
-                        Allowed special characters:{" "}
-                        <span aria-label="exclamation mark">!</span>
-                        <span aria-label="at symbol">@</span>{" "}
-                        <span aria-label="hashtag">#</span>{" "}
-                        <span aria-label="dollar sign">$</span>{" "}
-                        <span aria-label="percent">%</span>
-                     </p>
+                      <div className="bc-signup-password-wrap">
+                        <input
+                          id="signup-password"
+                          type={
+                            showPassword ? "text" : "password"
+                          }
+                          value={password}
+                          placeholder="Create a password"
+                          autoComplete="new-password"
+                          required
+                          aria-invalid={
+                            password.length > 0 &&
+                            !validPassword
+                          }
+                          aria-describedby="signup-password-info"
+                          onChange={(e) => {
+                            setPassword(e.target.value);
+                            setErrorMsg("");
+                          }}
+                          onFocus={() =>
+                            setPasswordFocus(true)
+                          }
+                          onBlur={() =>
+                            setPasswordFocus(false)
+                          }
+                        />
 
-                     {/* Matching Password */}
-                     <label htmlFor="confirm_password">
-                        Confirm Password
-                        <span className={validMatch && matchPassword ? "valid" : "hide"}>
-                           ✔️
-                        </span>
-                        <span
-                           className={validMatch || !matchPassword ? "hide" : "invalid"}>
-                           ❌
-                        </span>
-                     </label>
-                     <input
-                        type="password"
-                        id="confirm_password"
-                        onChange={(e) => {
-                           setMatchPassword(e.target.value);
-                           setErrorMsg("");
-                        }}
+                        <button
+                          type="button"
+                          className="bc-signup-show-password"
+                          onClick={() =>
+                            setShowPassword((prev) => !prev)
+                          }
+                          aria-label={
+                            showPassword
+                              ? "Hide password"
+                              : "Show password"
+                          }
+                        >
+                          {showPassword ? "Hide" : "Show"}
+                        </button>
+                      </div>
+
+                      {passwordFocus && !validPassword && (
+                        <p
+                          id="signup-password-info"
+                          className="bc-signup-hint"
+                        >
+                          Use 8–24 characters with uppercase and
+                          lowercase letters, a number, and one
+                          of these symbols: ! @ # $ %.
+                        </p>
+                      )}
+                    </div>
+
+                    {/* CONFIRM PASSWORD */}
+                    <div className="bc-signup-field">
+                      <label htmlFor="signup-confirm">
+                        Confirm password
+                        {validMatch && (
+                          <span className="bc-signup-valid">
+                            {" "}✓
+                          </span>
+                        )}
+                      </label>
+
+                      <input
+                        id="signup-confirm"
+                        type={
+                          showPassword ? "text" : "password"
+                        }
+                        value={matchPassword}
+                        placeholder="Re-enter your password"
+                        autoComplete="new-password"
                         required
-                        aria-invalid={matchPassword.length > 0 && !validMatch}
-                        aria-describedby="matchinfo"
+                        aria-invalid={
+                          matchPassword.length > 0 &&
+                          !validMatch
+                        }
+                        aria-describedby="signup-confirm-info"
+                        onChange={(e) => {
+                          setMatchPassword(e.target.value);
+                          setErrorMsg("");
+                        }}
                         onFocus={() => setMatchFocus(true)}
                         onBlur={() => setMatchFocus(false)}
-                     />
-                     <p
-                        id="matchinfo"
-                        className={
-                           matchFocus && !validMatch ? "instructions" : "offscreen"
-                        }>
-                        Please match inputted password.
-                     </p>
+                      />
 
-                     {/* signup button is disabled until requirements are met*/}
-                     <button
-                        disabled={
-                           !validName || !validEmail || !validPassword || !validMatch
-                              ? true
-                              : false
-                        }>
-                        Sign up
-                     </button>
+                      {matchFocus &&
+                        matchPassword &&
+                        !validMatch && (
+                          <p
+                            id="signup-confirm-info"
+                            className="bc-signup-hint"
+                          >
+                            Your passwords must match.
+                          </p>
+                        )}
+                    </div>
+
+                    <button
+                      className="bc-signup-submit"
+                      type="submit"
+                      disabled={
+                        submitting ||
+                        !validName ||
+                        !validEmail ||
+                        !validPassword ||
+                        !validMatch
+                      }
+                    >
+                      {submitting
+                        ? "Creating account..."
+                        : "Create my account →"}
+                    </button>
+                  </form>
+
+                  <div className="bc-signup-divider">
+                    <span>ALREADY EXPLORING WITH US?</span>
                   </div>
-               </form>
-               <div>
-                  <p>
-                     Already have an account?
-                     <span>
-                        <Link to="/login">Login</Link>
-                     </span>
+
+                  <p className="bc-signup-login-prompt">
+                    Already have an account?{" "}
+                    <Link to="/login">Log In</Link>
                   </p>
-               </div>
-            </>
-         )}
-      </section>
-   );
-};
+                </>
+              )}
+
+              <p className="bc-signup-bottom-note">
+                Made for the curious. Built for discovering NYC. ✦
+              </p>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  );
+}
+
 export default Signup;
+
