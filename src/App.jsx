@@ -5,6 +5,9 @@ import Login from "./components/Login";
 import Signup from "./components/Signup";
 import LandingPage from "./LandingPage";
 import RequiredAuth from "./components/RequiredAuth";
+import Profile from "./components/Profile";
+import Archive from "./components/Archive";
+import Saved from "./components/Saved";
 
 function App() {
    return (
@@ -12,8 +15,12 @@ function App() {
          <Route path="/" element={<LandingPage />} />
          <Route path="/login" element={<Login />} />
          <Route path="/signup" element={<Signup />} />
+
          <Route element={RequiredAuth}>
-            <Route>{/* put login-required routes here */}</Route>
+            {/* put login-required routes here */}
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/archive" element={<Archive />} />
+            <Route path="/saved" element={<Saved />} />
          </Route>
       </Routes>
    );
