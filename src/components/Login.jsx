@@ -49,6 +49,30 @@ const Login = () => {
    };
 
    return (
+    <>
+      <header className="bc-signup-header">
+        <Link to="/" className="bc-signup-logo">
+            <span aria-hidden="true">✦</span>
+            Breadcrumbs
+        </Link>
+
+        <nav className="bc-signup-nav" aria-label="Main navigation">
+            <Link to="/">Home</Link>
+            <a href="/#features">Features</a>
+            <a href="/#about">About</a>
+            <a href="/#blog">Blog</a>
+        </nav>
+
+        <div className="bc-signup-header-actions">
+            <Link to="/login" className="bc-signup-login-button">
+              Log In
+            </Link>
+            <Link to="/signup" className="bc-signup-active-button">
+              Sign Up
+            </Link>
+        </div>
+      </header>
+
       <main className="breadcrumbs-login">
          <section className="login-hero">
             <img
@@ -192,7 +216,8 @@ const Login = () => {
             </div>
          </section>
       </main>
-   );
+    </>
+  );
 };
 
 export default Login;
