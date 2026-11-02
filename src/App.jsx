@@ -17,13 +17,13 @@ function App() {
          <Route path="/" element={<LandingPage />} />
          <Route path="/login" element={<Login />} />
          <Route path="/signup" element={<Signup />} />
+         <Route path="/map" element={<FriendsMapWidget />} />
 
          {/* Pages that require users to log in */}
          <Route element={<RequiredAuth />}>
             <Route path="/profile" element={<Profile />} />
             <Route path="/archive" element={<Archive />} />
             <Route path="/saved" element={<Saved />} />
-            <Route path="/map" element={<FriendsMapWidget />} />
          </Route>
       </Routes>
    );
