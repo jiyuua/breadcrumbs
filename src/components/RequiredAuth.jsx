@@ -13,7 +13,7 @@ const RequiredAuth = () => {
 
    // invalid session / user isn't logged, redirect to login page
    if (!auth?.user) {
-      return <Navigate to="/login" replace stae={{ from: location }} />;
+      return <Navigate to="/login" replace state={{ from: location }} />;
    }
    return <Outlet />;
 };
