@@ -293,6 +293,129 @@ app.post("/api/auth/logout", (req, res) => {
     });
 });
 
+
+app.get("/api/preferences", async (req, res) => {
+  try {
+    // Check whether the user is logged in
+    if (!req.session.userId) {
+      return res.status(401).json({
+        error: "Not authenticated"
+      });
+    }
+
+    // Find preferences belonging to the logged-in user
+    const preferences = await prisma.userPreference.findUnique({
+      where: {
+        userId: req.session.userId
+      }
+    });
+
+    // Return the user's preferences
+    res.status(200).json({
+      preferences: preferences
+    });
+
+  } catch (error) {
+    console.error("Error retrieving preferences:", error);
+
+    res.status(500).json({
+      error: "Failed to retrieve preferences"
+    });
+  }
+});
+
+
+app.put("/api/preferences", async (req, res) => {
+  try {
+    // Make sure the user is logged in
+    if (!req.session.userId) {
+      return res.status(401).json({
+        error: "Not authenticated"
+      });
+    }
+
+    // Get the preferences sent by the frontend
+    const {
+      budget,
+      interests,
+      boroughs,
+      transportation,
+      availableHours,
+      maxTravelMinutes
+    } = req.body ?? {};
+
+    // Validate the submitted values
+    const validBoroughs = [
+      "Manhattan", "Brooklyn", "Queens",
+      "Bronx", "Staten Island"
+    ];
+
+    const validTransportation = [
+      "Walking", "Subway", "Bus", "Biking", "Driving"
+    ];
+
+    const validInteger = (value) =>
+      value === null ||
+      (Number.isSafeInteger(value) && value >= 0);
+
+    if (
+      !validInteger(budget) ||
+      !validInteger(availableHours) ||
+      !validInteger(maxTravelMinutes) ||
+      !Array.isArray(interests) ||
+      !interests.every(item =>
+        typeof item === "string" &&
+        item.trim().length > 0 &&
+        item.length <= 100
+      ) ||
+      interests.length > 20 ||
+      !Array.isArray(boroughs) ||
+      !boroughs.every(item => validBoroughs.includes(item)) ||
+      boroughs.length > 5 ||
+      !(transportation === null ||
+        validTransportation.includes(transportation))
+    ) {
+      return res.status(400).json({
+        error: "Invalid preferences"
+      });
+    }
+
+    // Create preferences if missing, otherwise update them
+    const preferences = await prisma.userPreference.upsert({
+      where: {
+        userId: req.session.userId
+      },
+      update: {
+        budget,
+        interests,
+        boroughs,
+        transportation,
+        availableHours,
+        maxTravelMinutes
+      },
+      create: {
+        userId: req.session.userId,
+        budget,
+        interests,
+        boroughs,
+        transportation,
+        availableHours,
+        maxTravelMinutes
+      }
+    });
+
+    res.status(200).json({ preferences });
+
+  } catch (error) {
+    console.error("Error saving preferences:", error);
+
+    res.status(500).json({
+      error: "Failed to save preferences"
+    });
+  }
+});
+
+
 app.listen(PORT, () => {
 
     console.log(`Server running on http://localhost:${PORT}`);
