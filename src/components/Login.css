@@ -1,0 +1,348 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700&display=swap");
+
+* {
+    box-sizing: border-box;
+  }
+  
+  .breadcrumbs-login {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr);
+    width: min(1350px, calc(100% - 64px));
+    min-height: 690px;
+    margin: 45px auto 70px;
+    overflow: hidden;
+    border: 1px solid #e8e1d7;
+    border-radius: 28px;
+    background: #fffdf9;
+    box-shadow: 0 20px 60px rgba(64, 48, 30, 0.06);
+    color: #25211c;
+    font-family: "Inter", Arial, sans-serif;
+  }
+  
+  .login-hero {
+    position: relative;
+    min-height: 690px;
+    overflow: hidden;
+    background: #ddd0bc;
+  }
+  
+  .hero-photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+  
+  .sticky-note {
+    position: absolute;
+    z-index: 1;
+    padding: 16px 20px;
+    color: #171717;
+    font-family: Georgia, serif;
+    font-size: clamp(17px, 1.6vw, 24px);
+    font-style: italic;
+    line-height: 1.25;
+    text-align: center;
+    box-shadow: 0 5px 15px #00000018;
+  }
+  
+  .note-explore {
+    top: 12%;
+    left: 9%;
+    background: #fff0bf;
+    transform: rotate(-7deg);
+  }
+  
+  .note-plan {
+    bottom: 24%;
+    left: 7%;
+    background: #ffd8d0;
+    transform: rotate(-9deg);
+  }
+  
+  .note-memories {
+    right: 10%;
+    bottom: 15%;
+    background: #e3edcb;
+    transform: rotate(8deg);
+  }
+  
+  .hero-caption {
+    position: absolute;
+    z-index: 1;
+    bottom: 24px;
+    left: 24px;
+    color: white;
+    font-size: 13px;
+    text-shadow: 0 1px 5px #000;
+  }
+  
+  .login-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px clamp(24px, 4vw, 60px);
+    background:#fffdf9;
+  }
+  
+  .login-inner {
+    width: 100%;
+    max-width: 425px;
+  }
+  
+  .nyc-emblem {
+    position: absolute;
+    top: 26px;
+    right: 26px;
+    display: grid;
+    place-items: center;
+    width: 76px;
+    height: 76px;
+    border: 2px solid #a3b49a;
+    border-radius: 50%;
+    color: #7d9477;
+    font-family: Georgia, serif;
+    font-size: 14px;
+    transform: rotate(10deg);
+  }
+  
+  .login-eyebrow {
+    margin: 0 0 13px;
+    color: #a47a3b;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+  }
+  
+  .login-brand {
+    margin: 0;
+    color: #25211c;
+    font-family: "DM Serif Display", Georgia, serif;
+    font-size: clamp(36px, 3.2vw, 48px);
+    font-weight: 400;
+    letter-spacing: -1px;
+    line-height: 1.1;
+  }
+  
+  .login-brand span {
+    color: #b58a45;
+    font-size: 0.7em;
+  }
+  
+  .login-description {
+    margin: 20px 0 30px;
+    color: #756c62;
+    font-size: 14px;
+    line-height: 1.75;
+  }
+  
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+  }
+  
+  .login-input {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+    padding: 0 15px;
+    border: 1px solid #dfd9ce;
+    border-radius: 11px;
+    background: white;
+    color: #777;
+  }
+  
+  .login-input:focus-within {
+    border-color: #315f60;
+    outline: 2px solid rgba(49, 95, 96, 0.22);
+  }
+  
+  .login-input input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: #25211c;
+    font-family: inherit;
+    font-size: 13px;
+  }
+  
+  .login-input input::placeholder {
+    color: #aaa197;
+  }
+  
+  .password-toggle {
+    border: 0;
+    background: transparent;
+    color: #315f60;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  
+  .login-options a,
+  .signup-text a {
+    color: #315f60;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  
+  .remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .remember-me input {
+    width: 18px;
+    height: 18px;
+    accent-color: #205558;
+  }
+  
+  .login-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 49px;
+    border: 1px solid #315f60;
+    border-radius: 11px;
+    background: #315f60;
+    color: white;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 160ms ease;
+  }
+  
+  .login-submit:hover {
+    background: #254d4e;
+  }
+  
+  .login-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 25px 0 18px;
+    color: #998d7e;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  
+  .login-divider span {
+    flex: 1;
+    height: 1px;
+    background: #e5ded3;
+  }
+  
+  .social-login {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  
+  .social-login button {
+    border: 1px solid #d8d5ce;
+    border-radius: 11px;
+    background: transparent;
+    color: #25211c;
+    font-family: inherit;
+    font-size: 12px;
+  }
+  
+  .social-login button:hover {
+    background: #f0ede4;
+  }
+  
+  .google-icon {
+    color: #4285f4;
+    font-size: 21px;
+    font-weight: bold;
+  }
+  
+  .apple-icon {
+    color: #111;
+    font-size: 20px;
+  }
+  
+  .signup-text {
+    margin: 25px 0 0;
+    color: #746b62;
+    text-align: center;
+    font-size: 12px;
+  }
+  
+  .login-error {
+    margin: 0 0 14px;
+    color: #a12727;
+    font-size: 14px;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  @media (max-width: 760px) {
+    .breadcrumbs-login {
+      display: block;
+      width: calc(100% - 24px);
+      min-height: auto;
+      margin: 20px auto 35px;
+      border-radius: 20px;
+    }
+  
+    .login-hero {
+      min-height: 230px;
+    }
+  
+    .login-card {
+      min-height: auto;
+      padding: 35px 23px 38px;
+    }
+  
+    .login-inner {
+      max-width: 425px;
+      margin: 0 auto;
+    }
+  
+    .login-brand {
+      font-size: 38px;
+    }
+  
+    .login-description {
+      font-size: 13px;
+    }
+  
+    .nyc-emblem {
+      top: 15px;
+      right: 15px;
+      width: 48px;
+      height: 48px;
+      font-size: 10px;
+    }
+  
+    .social-login {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  html,
+  body {
+    min-height: 100%;
+    background: #faf7f0 !important;
+  }
+  
+  #root {
+    background: #faf7f0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }  

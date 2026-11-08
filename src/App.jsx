@@ -1,16 +1,31 @@
-import { Navigate, Routes, Route } from "react-router";
+import { Routes, Route } from "react-router";
 import "./App.css";
-import Login from "./Login";
-import Signup from "./Signup";
+
+import Login from "./components/Login";
+import Signup from "./components/Signup";
+import LandingPage from "./LandingPage";
+import FriendsMapWidget from "./components/FriendsMapWidget";
+
+import RequiredAuth from "./components/RequiredAuth";
+import Profile from "./components/Profile";
+import Archive from "./components/Archive";
+import Saved from "./components/Saved";
+
 function App() {
    return (
-      <>
-         <Routes>
-            <Route path="/" element={<Navigate to="/login" replace />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-         </Routes>
-      </>
+      <Routes>
+         <Route path="/" element={<LandingPage />} />
+         <Route path="/login" element={<Login />} />
+         <Route path="/signup" element={<Signup />} />
+         <Route path="/map" element={<FriendsMapWidget />} />
+
+         {/* Pages that require users to log in */}
+         <Route element={<RequiredAuth />}>
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/archive" element={<Archive />} />
+            <Route path="/saved" element={<Saved />} />
+         </Route>
+      </Routes>
    );
 }
 
