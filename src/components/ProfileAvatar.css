@@ -1,0 +1,21 @@
+.bc-profile-avatar {
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   width: 44px;
+   height: 44px;
+   border: 2px solid #d8a853;
+   border-radius: 50%;
+   background: #b98d72;
+   color: #fff;
+   font-size: 14px;
+   font-weight: 700;
+   line-height: 1;
+   text-decoration: none;
+   text-transform: uppercase;
+}
+
+.bc-profile-avatar:focus-visible {
+   outline: 3px solid #d8a853;
+   outline-offset: 3px;
+}

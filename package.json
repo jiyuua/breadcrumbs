@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.119.0",
     "axios": "^1.20.0",
     "leaflet": "^1.9.4",
     "pg": "^8.23.1",
