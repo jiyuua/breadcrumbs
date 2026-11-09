@@ -2,6 +2,7 @@ import { useRef, useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 import axios from "../api/axios";
+import ProfileAvatar from "./ProfileAvatar";
 import nycSunset from "../assets/nyc-sunset-2.jpg";
 import "./Login.css";
 
@@ -9,7 +10,7 @@ const LOGIN_URL = "/auth/login";
 
 const Login = () => {
    const navigate = useNavigate();
-   const { setAuth } = useContext(AuthContext);
+   const { auth, loading, setAuth } = useContext(AuthContext);
    const userRef = useRef();
    const errRef = useRef();
 
@@ -66,12 +67,19 @@ const Login = () => {
             </nav>
 
             <div className="bc-signup-header-actions">
-               <Link to="/login" className="bc-signup-login-button">
-                  Log In
-               </Link>
-               <Link to="/signup" className="bc-signup-active-button">
-                  Sign Up
-               </Link>
+               {!loading &&
+                  (auth?.user ? (
+                     <ProfileAvatar user={auth.user} />
+                  ) : (
+                     <>
+                        <Link to="/login" className="bc-signup-login-button">
+                           Log In
+                        </Link>
+                        <Link to="/signup" className="bc-signup-active-button">
+                           Sign Up
+                        </Link>
+                     </>
+                  ))}
             </div>
          </header>
 

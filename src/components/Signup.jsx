@@ -1,6 +1,8 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useContext } from "react";
 import { Link } from "react-router";
+import { AuthContext } from "../context/AuthContext";
 import axios from "../api/axios";
+import ProfileAvatar from "./ProfileAvatar";
 import "./Signup.css";
 
 const USER_REGEX = /^[A-Za-z][A-Za-z0-9-_]{3,23}$/;
@@ -10,6 +12,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const REGISTERURL = "/auth/register";
 
 function Signup() {
+   const { auth, loading } = useContext(AuthContext);
    const userRef = useRef(null);
    const errRef = useRef(null);
 
@@ -134,13 +137,20 @@ function Signup() {
             </nav>
 
             <div className="bc-signup-header-actions">
-               <Link className="bc-signup-login-button" to="/login">
-                  Log In
-               </Link>
+               {!loading &&
+                  (auth?.user ? (
+                     <ProfileAvatar user={auth.user} />
+                  ) : (
+                     <>
+                        <Link className="bc-signup-login-button" to="/login">
+                           Log In
+                        </Link>
 
-               <Link className="bc-signup-active-button" to="/signup" aria-current="page">
-                  Sign Up
-               </Link>
+                        <Link className="bc-signup-active-button" to="/signup" aria-current="page">
+                           Sign Up
+                        </Link>
+                     </>
+                  ))}
             </div>
          </header>
 

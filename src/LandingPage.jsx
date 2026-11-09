@@ -1,6 +1,8 @@
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router";
+import { AuthContext } from "./context/AuthContext";
+import ProfileAvatar from "./components/ProfileAvatar";
 import "./LandingPage.css";
 
 const assets = "/assets/";
@@ -93,6 +95,7 @@ const stories = [
 function Header() {
   const [open, setOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const { auth, loading } = useContext(AuthContext);
 
   useEffect(() => {
     const updateActive = () => {
@@ -183,13 +186,20 @@ function Header() {
       </nav>
 
       <div className="bc-header-actions">
-        <Link className="bc-button bc-outline" to="/login">
-          Log In
-        </Link>
+        {!loading &&
+          (auth?.user ? (
+            <ProfileAvatar user={auth.user} />
+          ) : (
+            <>
+              <Link className="bc-button bc-outline" to="/login">
+                Log In
+              </Link>
 
-        <Link className="bc-button bc-primary" to="/signup">
-          Sign Up
-        </Link>
+              <Link className="bc-button bc-primary" to="/signup">
+                Sign Up
+              </Link>
+            </>
+          ))}
       </div>
     </header>
   );
