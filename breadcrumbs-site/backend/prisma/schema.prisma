@@ -14,6 +14,7 @@ model User {
   createdAt    DateTime @default(now())
 
   preferences UserPreference?
+  memories Memory[]
 }
 
 model UserPreference {
@@ -27,4 +28,31 @@ model UserPreference {
   maxTravelMinutes  Int?
 
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Memory {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  title       String
+  description String?
+  location    String
+  latitude    Float?
+  longitude   Float?
+  createdAt   DateTime @default(now())
+
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  photos      MemoryPhoto[]
+
+  @@index([userId])
+}
+
+model MemoryPhoto {
+  id          Int      @id @default(autoincrement())
+  memoryId    Int
+  storagePath String   @unique
+  createdAt   DateTime @default(now())
+
+  memory      Memory   @relation(fields: [memoryId], references: [id], onDelete: Cascade)
+
+  @@index([memoryId])
 }
