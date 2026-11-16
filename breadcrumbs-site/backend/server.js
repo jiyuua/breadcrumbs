@@ -304,6 +304,529 @@ app.post("/api/auth/logout", (req, res) => {
     });
 });
 
+// Search for other Breadcrumbs users
+app.get("/api/users/search", async (req, res) => {
+    try {
+        // Require an authenticated user
+        if (!req.session.userId) {
+            return res.status(401).json({
+                message: "Not authenticated"
+            });
+        }
+
+        const { q } = req.query;
+
+        // Validate the search query
+        if (
+            typeof q !== "string" ||
+            q.trim().length < 2 ||
+            q.trim().length > 100
+        ) {
+            return res.status(400).json({
+                message: "Search must contain 2 to 100 characters"
+            });
+        }
+
+        // Search for users by name
+        const users = await prisma.user.findMany({
+            where: {
+                id: {
+                    not: req.session.userId
+                },
+                name: {
+                    contains: q.trim(),
+                    mode: "insensitive"
+                }
+            },
+            select: {
+                id: true,
+                name: true
+            },
+            orderBy: [
+                { name: "asc" },
+                { id: "asc" }
+            ],
+            take: 20
+        });
+
+        res.set("Cache-Control", "no-store");
+
+        return res.status(200).json({
+            users
+        });
+
+    } catch (error) {
+        console.error("User search error:", error);
+
+        return res.status(500).json({
+            message: "Unable to search for users"
+        });
+    }
+});
+
+// Send a friend request
+app.post("/api/friends/requests", async (req, res) => {
+    try {
+        // Require authentication
+        if (!req.session.userId) {
+            return res.status(401).json({
+                message: "Not authenticated"
+            });
+        }
+
+        const requesterId = req.session.userId;
+        const { receiverId } = req.body || {};
+
+        // Validate the receiver ID
+        if (
+            !Number.isSafeInteger(receiverId) ||
+            receiverId <= 0 ||
+            receiverId > 2147483647
+        ) {
+            return res.status(400).json({
+                message: "Invalid receiver ID"
+            });
+        }
+
+        // Prevent users from requesting themselves
+        if (requesterId === receiverId) {
+            return res.status(400).json({
+                message: "You cannot send yourself a friend request"
+            });
+        }
+
+        // Verify that the receiving user exists
+        const receiver = await prisma.user.findUnique({
+            where: {
+                id: receiverId
+            },
+            select: {
+                id: true
+            }
+        });
+
+        if (!receiver) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+        // Check for an existing friendship in either direction
+        const existingFriendship = await prisma.friendship.findFirst({
+            where: {
+                OR: [
+                    { requesterId, receiverId },
+                    {
+                        requesterId: receiverId,
+                        receiverId: requesterId
+                    }
+                ]
+            }
+        });
+
+        if (existingFriendship) {
+            return res.status(409).json({
+                message: "A friendship or request already exists",
+                status: existingFriendship.status
+            });
+        }
+
+        // Create the friend request
+        const friendship = await prisma.friendship.create({
+            data: {
+                requesterId,
+                receiverId,
+                status: "PENDING"
+            }
+        });
+
+        return res.status(201).json({
+            message: "Friend request sent successfully",
+            friendship
+        });
+
+    } catch (error) {
+        // Handle simultaneous duplicate requests
+        if (error.code === "P2002") {
+            return res.status(409).json({
+                message: "A friendship or request already exists"
+            });
+        }
+
+        console.error("Friend request error:", error);
+
+        return res.status(500).json({
+            message: "Unable to send friend request"
+        });
+    }
+});
+// Get incoming pending friend requests
+app.get("/api/friends/requests/incoming", async (req, res) => {
+    try {
+        if (!req.session.userId) {
+            return res.status(401).json({
+                message: "Not authenticated"
+            });
+        }
+
+        const requests = await prisma.friendship.findMany({
+            where: {
+                receiverId: req.session.userId,
+                status: "PENDING"
+            },
+            select: {
+                id: true,
+                status: true,
+                createdAt: true,
+                requester: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                }
+            },
+            orderBy: {
+                createdAt: "desc"
+            }
+        });
+
+        return res.status(200).json({
+            requests
+        });
+
+    } catch (error) {
+        console.error("Incoming friend requests error:", error);
+
+        return res.status(500).json({
+            message: "Unable to retrieve incoming requests"
+        });
+    }
+});
+// Get outgoing pending friend requests
+app.get("/api/friends/requests/outgoing", async (req, res) => {
+    try {
+        if (!req.session.userId) {
+            return res.status(401).json({
+                message: "Not authenticated"
+            });
+        }
+
+        const requests = await prisma.friendship.findMany({
+            where: {
+                requesterId: req.session.userId,
+                status: "PENDING"
+            },
+            select: {
+                id: true,
+                status: true,
+                createdAt: true,
+                receiver: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                }
+            },
+            orderBy: {
+                createdAt: "desc"
+            }
+        });
+
+        return res.status(200).json({
+            requests
+        });
+
+    } catch (error) {
+        console.error("Outgoing friend requests error:", error);
+
+        return res.status(500).json({
+            message: "Unable to retrieve outgoing requests"
+        });
+    }
+});
+// Accept a pending friend request
+app.patch("/api/friends/requests/:requestId/accept", async (req, res) => {
+    try {
+        if (!req.session.userId) {
+            return res.status(401).json({
+                message: "Not authenticated"
+            });
+        }
+
+        const requestId = Number(req.params.requestId);
+        const userId = req.session.userId;
+
+        // Validate the request ID
+        if (
+            !Number.isSafeInteger(requestId) ||
+            requestId <= 0 ||
+            requestId > 2147483647
+        ) {
+            return res.status(400).json({
+                message: "Invalid request ID"
+            });
+        }
+
+        // Only the receiver can accept a pending request
+        const result = await prisma.friendship.updateMany({
+            where: {
+                id: requestId,
+                receiverId: userId,
+                status: "PENDING"
+            },
+            data: {
+                status: "ACCEPTED"
+            }
+        });
+
+        if (result.count === 0) {
+            return res.status(404).json({
+                message: "Pending friend request not found"
+            });
+        }
+
+        return res.status(200).json({
+            message: "Friend request accepted successfully",
+            requestId,
+            status: "ACCEPTED"
+        });
+
+    } catch (error) {
+        console.error("Accept friend request error:", error);
+
+        return res.status(500).json({
+            message: "Unable to accept friend request"
+        });
+    }
+});
+// Decline a pending friend request
+app.patch("/api/friends/requests/:requestId/decline", async (req, res) => {
+    try {
+        if (!req.session.userId) {
+            return res.status(401).json({
+                message: "Not authenticated"
+            });
+        }
+
+        const requestId = Number(req.params.requestId);
+        const userId = req.session.userId;
+
+        // Validate the request ID
+        if (
+            !Number.isSafeInteger(requestId) ||
+            requestId <= 0 ||
+            requestId > 2147483647
+        ) {
+            return res.status(400).json({
+                message: "Invalid request ID"
+            });
+        }
+
+        // Only the receiver can decline a pending request
+        const result = await prisma.friendship.updateMany({
+            where: {
+                id: requestId,
+                receiverId: userId,
+                status: "PENDING"
+            },
+            data: {
+                status: "DECLINED"
+            }
+        });
+
+        if (result.count === 0) {
+            return res.status(404).json({
+                message: "Pending friend request not found"
+            });
+        }
+
+        return res.status(200).json({
+            message: "Friend request declined successfully",
+            requestId,
+            status: "DECLINED"
+        });
+
+    } catch (error) {
+        console.error("Decline friend request error:", error);
+
+        return res.status(500).json({
+            message: "Unable to decline friend request"
+        });
+    }
+});
+// Get all accepted friends of the logged-in user
+app.get("/api/friends", async (req, res) => {
+    try {
+        // Require authentication
+        if (!req.session.userId) {
+            return res.status(401).json({
+                message: "Not authenticated"
+            });
+        }
+
+        const userId = req.session.userId;
+
+        // Find accepted friendships in either direction
+        const friendships = await prisma.friendship.findMany({
+            where: {
+                status: "ACCEPTED",
+                OR: [
+                    { requesterId: userId },
+                    { receiverId: userId }
+                ]
+            },
+            select: {
+                id: true,
+                requesterId: true,
+                updatedAt: true,
+                requester: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                },
+                receiver: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                }
+            },
+            orderBy: {
+                updatedAt: "desc"
+            }
+        });
+
+        // Return the other user in each friendship
+        const friends = friendships.map(friendship => {
+            const friend = friendship.requesterId === userId
+                ? friendship.receiver
+                : friendship.requester;
+
+            return {
+                friendshipId: friendship.id,
+                id: friend.id,
+                name: friend.name,
+                friendsSince: friendship.updatedAt
+            };
+        });
+
+        res.set("Cache-Control", "no-store");
+
+        return res.status(200).json({
+            friends,
+            totalFriends: friends.length
+        });
+
+    } catch (error) {
+        console.error("Friends list error:", error);
+
+        return res.status(500).json({
+            message: "Unable to retrieve friends"
+        });
+    }
+});
+// Remove an accepted friendship
+app.delete("/api/friends/:friendshipId", async (req, res) => {
+    try {
+        if (!req.session.userId) {
+            return res.status(401).json({
+                message: "Not authenticated"
+            });
+        }
+
+        const friendshipId = Number(req.params.friendshipId);
+        const userId = req.session.userId;
+
+        if (
+            !Number.isSafeInteger(friendshipId) ||
+            friendshipId <= 0 ||
+            friendshipId > 2147483647
+        ) {
+            return res.status(400).json({
+                message: "Invalid friendship ID"
+            });
+        }
+
+        // Either participant can remove the friendship
+        const result = await prisma.friendship.deleteMany({
+            where: {
+                id: friendshipId,
+                status: "ACCEPTED",
+                OR: [
+                    { requesterId: userId },
+                    { receiverId: userId }
+                ]
+            }
+        });
+
+        if (result.count === 0) {
+            return res.status(404).json({
+                message: "Friendship not found"
+            });
+        }
+
+        return res.status(200).json({
+            message: "Friend removed successfully"
+        });
+
+    } catch (error) {
+        console.error("Remove friend error:", error);
+
+        return res.status(500).json({
+            message: "Unable to remove friend"
+        });
+    }
+});
+// Cancel an outgoing pending friend request
+app.delete("/api/friends/requests/:requestId", async (req, res) => {
+    try {
+        if (!req.session.userId) {
+            return res.status(401).json({
+                message: "Not authenticated"
+            });
+        }
+
+        const requestId = Number(req.params.requestId);
+        const userId = req.session.userId;
+
+        if (
+            !Number.isSafeInteger(requestId) ||
+            requestId <= 0 ||
+            requestId > 2147483647
+        ) {
+            return res.status(400).json({
+                message: "Invalid request ID"
+            });
+        }
+
+        // Only the sender can cancel a pending request
+        const result = await prisma.friendship.deleteMany({
+            where: {
+                id: requestId,
+                requesterId: userId,
+                status: "PENDING"
+            }
+        });
+
+        if (result.count === 0) {
+            return res.status(404).json({
+                message: "Pending outgoing request not found"
+            });
+        }
+
+        return res.status(200).json({
+            message: "Friend request canceled successfully"
+        });
+
+    } catch (error) {
+        console.error("Cancel friend request error:", error);
+
+        return res.status(500).json({
+            message: "Unable to cancel friend request"
+        });
+    }
+});
 
 app.get("/api/preferences", async (req, res) => {
   try {
@@ -443,8 +966,15 @@ app.post("/api/memories", async (req, res) => {
             description,
             location,
             latitude,
-            longitude
+            longitude,
+            visibility = "PRIVATE"
         } = req.body || {};
+
+        if (!["PRIVATE", "FRIENDS"].includes(visibility)) {
+    return res.status(400).json({
+        message: "Visibility must be PRIVATE or FRIENDS"
+    });
+}
 
         // Validate required text fields
         if (
@@ -490,7 +1020,8 @@ app.post("/api/memories", async (req, res) => {
                 description: description?.trim() || null,
                 location: location.trim(),
                 latitude: latitude ?? null,
-                longitude: longitude ?? null
+                longitude: longitude ?? null,
+                visibility: visibility 
             }
         });
 
@@ -547,6 +1078,69 @@ app.get("/api/memories", async (req, res) => {
 
         return res.status(500).json({
             message: "Unable to retrieve memories"
+        });
+    }
+});
+// Update the visibility of an existing memory
+app.patch("/api/memories/:memoryId/visibility", async (req, res) => {
+    try {
+        // Require authentication
+        if (!req.session.userId) {
+            return res.status(401).json({
+                message: "Not authenticated"
+            });
+        }
+
+        const userId = req.session.userId;
+        const memoryId = Number(req.params.memoryId);
+        const { visibility } = req.body || {};
+
+        // Validate memory ID
+        if (
+            !Number.isSafeInteger(memoryId) ||
+            memoryId <= 0 ||
+            memoryId > 2147483647
+        ) {
+            return res.status(400).json({
+                message: "Invalid memory ID"
+            });
+        }
+
+        // Validate visibility
+        if (!["PRIVATE", "FRIENDS"].includes(visibility)) {
+            return res.status(400).json({
+                message: "Visibility must be PRIVATE or FRIENDS"
+            });
+        }
+
+        // Only the memory owner can update visibility
+        const result = await prisma.memory.updateMany({
+            where: {
+                id: memoryId,
+                userId
+            },
+            data: {
+                visibility
+            }
+        });
+
+        if (result.count === 0) {
+            return res.status(404).json({
+                message: "Memory not found"
+            });
+        }
+
+        return res.status(200).json({
+            message: "Memory visibility updated successfully",
+            memoryId,
+            visibility
+        });
+
+    } catch (error) {
+        console.error("Update memory visibility error:", error);
+
+        return res.status(500).json({
+            message: "Unable to update memory visibility"
         });
     }
 });
