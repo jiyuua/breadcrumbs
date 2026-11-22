@@ -1081,6 +1081,83 @@ app.get("/api/memories", async (req, res) => {
         });
     }
 });
+// Get memories shared by accepted friends
+app.get("/api/memories/friends", async (req, res) => {
+    try {
+        // Require authentication
+        if (!req.session.userId) {
+            return res.status(401).json({
+                message: "Not authenticated"
+            });
+        }
+
+        const userId = req.session.userId;
+
+        // Find shared memories belonging to accepted friends
+        const memories = await prisma.memory.findMany({
+            where: {
+                visibility: "FRIENDS",
+                userId: {
+                    not: userId
+                },
+                user: {
+                    is: {
+                        OR: [
+                            {
+                                sentFriendRequests: {
+                                    some: {
+                                        receiverId: userId,
+                                        status: "ACCEPTED"
+                                    }
+                                }
+                            },
+                            {
+                                receivedFriendRequests: {
+                                    some: {
+                                        requesterId: userId,
+                                        status: "ACCEPTED"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                },
+                photos: {
+                    select: {
+                        id: true,
+                        createdAt: true
+                    }
+                }
+            },
+            orderBy: {
+                createdAt: "desc"
+            }
+        });
+
+        res.set("Cache-Control", "no-store");
+
+        return res.status(200).json({
+            memories,
+            totalMemories: memories.length
+        });
+
+    } catch (error) {
+        console.error("Get friends memories error:", error);
+
+        return res.status(500).json({
+            message: "Unable to retrieve friends' memories"
+        });
+    }
+});
+
 // Update the visibility of an existing memory
 app.patch("/api/memories/:memoryId/visibility", async (req, res) => {
     try {
@@ -1311,7 +1388,8 @@ if (uploadError) {
 });
 
 
- // Generate a temporary URL for a private memory photo
+
+// Generate a temporary URL for an authorized memory photo
 app.get("/api/memories/:memoryId/photos/:photoId/url", async (req, res) => {
     try {
         // Check whether the user is logged in
@@ -1321,6 +1399,7 @@ app.get("/api/memories/:memoryId/photos/:photoId/url", async (req, res) => {
             });
         }
 
+        const userId = req.session.userId;
         const memoryId = Number(req.params.memoryId);
         const photoId = Number(req.params.photoId);
 
@@ -1328,28 +1407,66 @@ app.get("/api/memories/:memoryId/photos/:photoId/url", async (req, res) => {
         if (
             !Number.isSafeInteger(memoryId) ||
             memoryId <= 0 ||
+            memoryId > 2147483647 ||
             !Number.isSafeInteger(photoId) ||
-            photoId <= 0
+            photoId <= 0 ||
+            photoId > 2147483647
         ) {
             return res.status(400).json({
                 message: "Invalid memory or photo ID"
             });
         }
 
-        // Find the photo and verify that the user owns its memory
+        // Find photo only if the user has permission to access it
         const photo = await prisma.memoryPhoto.findFirst({
             where: {
                 id: photoId,
                 memoryId,
                 memory: {
-                    userId: req.session.userId
+                    is: {
+                        OR: [
+                            // Owner can access their own photos
+                            {
+                                userId
+                            },
+
+                            // Accepted friends can access FRIENDS photos
+                            {
+                                visibility: "FRIENDS",
+                                user: {
+                                    is: {
+                                        OR: [
+                                            {
+                                                sentFriendRequests: {
+                                                    some: {
+                                                        receiverId: userId,
+                                                        status: "ACCEPTED"
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                receivedFriendRequests: {
+                                                    some: {
+                                                        requesterId: userId,
+                                                        status: "ACCEPTED"
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
                 }
             },
             select: {
+                id: true,
                 storagePath: true
             }
         });
 
+        // Photo does not exist or user lacks permission
         if (!photo) {
             return res.status(404).json({
                 message: "Photo not found"
@@ -1369,7 +1486,7 @@ app.get("/api/memories/:memoryId/photos/:photoId/url", async (req, res) => {
             });
         }
 
-        // Prevent caching the response containing the signed URL
+        // Prevent caching the signed URL response
         res.set("Cache-Control", "no-store");
 
         return res.status(200).json({
@@ -1386,6 +1503,7 @@ app.get("/api/memories/:memoryId/photos/:photoId/url", async (req, res) => {
         });
     }
 });
+
 
 app.delete("/api/memories/:memoryId/photos/:photoId", async (req, res) => {
     try {
