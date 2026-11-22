@@ -14,20 +14,23 @@ model User {
   createdAt    DateTime @default(now())
 
   preferences UserPreference?
-  memories Memory[]
+  memories    Memory[]
+
+  sentFriendRequests     Friendship[] @relation("SentFriendRequests")
+  receivedFriendRequests Friendship[] @relation("ReceivedFriendRequests")
 }
 
 model UserPreference {
-  id                Int      @id @default(autoincrement())
-  userId            Int      @unique
-  budget            Int?
-  interests         String[] @default([])
-  boroughs          String[] @default([])
-  transportation    String?
-  availableHours    Int?
-  maxTravelMinutes  Int?
+  id               Int      @id @default(autoincrement())
+  userId           Int      @unique
+  budget           Int?
+  interests        String[] @default([])
+  boroughs         String[] @default([])
+  transportation   String?
+  availableHours   Int?
+  maxTravelMinutes Int?
 
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Memory {
@@ -40,8 +43,9 @@ model Memory {
   longitude   Float?
   createdAt   DateTime @default(now())
 
-  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  photos      MemoryPhoto[]
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  photos     MemoryPhoto[]
+  visibility MemoryVisibility @default(PRIVATE)
 
   @@index([userId])
 }
@@ -52,7 +56,34 @@ model MemoryPhoto {
   storagePath String   @unique
   createdAt   DateTime @default(now())
 
-  memory      Memory   @relation(fields: [memoryId], references: [id], onDelete: Cascade)
+  memory Memory @relation(fields: [memoryId], references: [id], onDelete: Cascade)
 
   @@index([memoryId])
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+enum MemoryVisibility {
+  PRIVATE
+  FRIENDS
+}
+
+model Friendship {
+  id          Int              @id @default(autoincrement())
+  requesterId Int
+  receiverId  Int
+  status      FriendshipStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  requester User @relation("SentFriendRequests", fields: [requesterId], references: [id], onDelete: Cascade)
+  receiver  User @relation("ReceivedFriendRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([requesterId, receiverId])
+  @@index([receiverId, status])
+  @@index([requesterId, status])
 }
