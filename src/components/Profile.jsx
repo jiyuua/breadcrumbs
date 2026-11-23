@@ -1,8 +1,9 @@
-
 import { useState } from "react";
 import { Link } from "react-router";
 import "./Profile.css";
 import FriendsMapWidget from "./FriendsMapWidget";
+import Memories from "./Memories";
+
 const initialSpots = [
   {
     id: 1,
@@ -214,38 +215,7 @@ export default function Profile() {
     </section>
   );
 
-  const Memories = ({ preview = false }) => (
-    <section className="bp-panel">
-      <div className="bp-section-heading">
-        <div>
-          <span className="bp-eyebrow">EVERY BREADCRUMB TELLS A STORY</span>
-          <h2>▧ My Memories</h2>
-        </div>
-        <button
-          className="bp-link-button"
-          onClick={() =>
-            preview
-              ? choose("memories")
-              : setNotice("Memory uploads will be connected later.")
-          }
-        >
-          {preview ? "See all →" : "+ Add memory"}
-        </button>
-      </div>
 
-      <div className="bp-memories">
-        {memories.slice(0, preview ? 2 : undefined).map((memory) => (
-          <article className="bp-memory" key={memory.title}>
-            <Photo src={memory.image} alt={memory.title} />
-            <div>
-              <small>{memory.date}</small>
-              <h3>{memory.title}</h3>
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
 
   return (
     <div className="bp-page">
@@ -387,7 +357,7 @@ export default function Profile() {
 
               <SavedSpots preview />
               <FriendsMap preview />
-              <Memories preview />
+              <Memories preview onSeeAll={() => choose("memories")} />
             </>
           )}
 

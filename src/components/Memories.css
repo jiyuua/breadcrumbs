@@ -1,0 +1,389 @@
+
+/* BREADCRUMBS — INTERACTIVE MEMORIES */
+
+#root .bp-page .bp-memories-panel {
+  background: #fffdf9;
+}
+
+#root .bp-page .bp-memory-subtitle {
+  color: #8c8174;
+  font-size: 12px;
+  margin: 10px 0 0;
+}
+
+#root .bp-page .bp-memory-create,
+#root .bp-page .bp-memory-submit {
+  background: #315f60;
+  color: white;
+  border: none;
+  border-radius: 22px;
+  padding: 11px 18px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#root .bp-page .bp-memory-create:hover,
+#root .bp-page .bp-memory-submit:hover {
+  background: #244b4b;
+}
+
+/* SEARCH AND FILTERS */
+
+#root .bp-page .bp-memory-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 22px 0;
+}
+
+#root .bp-page .bp-memory-toolbar input {
+  flex: 1;
+  min-width: 180px;
+  padding: 12px 15px;
+  border: 1px solid #eae5db;
+  border-radius: 12px;
+  background: white;
+  color: #26231f;
+}
+
+#root .bp-page .bp-memory-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#root .bp-page .bp-memory-filters button {
+  padding: 9px 14px;
+  border: 1px solid #eae5db;
+  border-radius: 20px;
+  background: white;
+  color: #625b53;
+  cursor: pointer;
+}
+
+#root .bp-page .bp-memory-filters button.active {
+  background: #e2ebdf;
+  border-color: #a8bda8;
+  color: #315f60;
+  font-weight: 700;
+}
+
+/* MEMORY CARDS */
+
+#root .bp-page .bp-memory {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#root .bp-page .bp-memory:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 26px rgba(45, 55, 45, 0.12);
+}
+
+#root .bp-page .bp-memory-image-wrap {
+  position: relative;
+  height: 180px;
+}
+
+#root .bp-page .bp-memory-open {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: #e9e1d3;
+  cursor: pointer;
+}
+
+#root .bp-page .bp-memory-open img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#root .bp-page .bp-memory-favorite {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: white;
+  color: #a96560;
+  font-size: 23px;
+  cursor: pointer;
+}
+
+#root .bp-page .bp-memory-favorite.active {
+  background: #fff0ed;
+  color: #bb5b50;
+}
+
+#root .bp-page .bp-memory-card-content {
+  padding: 16px;
+}
+
+#root .bp-page .bp-memory-card-content h3 {
+  margin: 8px 0;
+}
+
+#root .bp-page .bp-memory-card-content p {
+  color: #857b6e;
+  font-size: 12px;
+}
+
+#root .bp-page .bp-memory-card-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 15px;
+  color: #8c8174;
+  font-size: 11px;
+}
+
+#root .bp-page .bp-memory-view-link {
+  margin-top: 12px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #315f60;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#root .bp-page .bp-memory-empty {
+  padding: 35px 10px;
+  color: #8c8174;
+  text-align: center;
+}
+
+/* MEMORY MODALS */
+
+#root .bp-page .bp-memory-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background: rgba(25, 35, 30, 0.7);
+}
+
+#root .bp-page .bp-memory-dialog {
+  position: relative;
+  width: min(620px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 22px;
+  background: #fffdf9;
+  box-shadow: 0 20px 65px rgba(0, 0, 0, 0.2);
+}
+
+#root .bp-page .bp-memory-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 50%;
+  background: white;
+  color: #315f60;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+#root .bp-page .bp-memory-gallery img {
+  display: block;
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+}
+
+#root .bp-page .bp-memory-gallery-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+  padding: 12px;
+  background: #f4f0e8;
+}
+
+#root .bp-page .bp-memory-gallery-controls button {
+  border: none;
+  background: transparent;
+  color: #315f60;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+#root .bp-page .bp-memory-dialog-content {
+  padding: 25px;
+}
+
+#root .bp-page .bp-memory-dialog-content h2,
+#root .bp-page .bp-memory-create-dialog h2 {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: 30px;
+  font-weight: 400;
+  color: #253c33;
+}
+
+#root .bp-page .bp-memory-dialog-content p {
+  color: #776e64;
+  line-height: 1.7;
+}
+
+#root .bp-page .bp-memory-collection {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 18px;
+  background: #e8eee5;
+  color: #315f60 !important;
+}
+
+#root .bp-page .bp-memory-like {
+  display: block;
+  margin: 18px 0;
+  padding: 10px 15px;
+  border: 1px solid #e4d6d1;
+  border-radius: 20px;
+  background: #fff4f1;
+  color: #a96560;
+  cursor: pointer;
+}
+
+/* COMMENTS */
+
+#root .bp-page .bp-memory-comments {
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #eae5db;
+}
+
+#root .bp-page .bp-memory-comment {
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  background: #f5f3ed;
+}
+
+#root .bp-page .bp-memory-comments form {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+#root .bp-page .bp-memory-comments input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #eae5db;
+  border-radius: 12px;
+  background: white;
+  color: #26231f;
+}
+
+#root .bp-page .bp-memory-comments form button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 12px;
+  background: #315f60;
+  color: white;
+  cursor: pointer;
+}
+
+/* CREATE MEMORY FORM */
+
+#root .bp-page .bp-memory-create-dialog {
+  padding: 30px;
+}
+
+#root .bp-page .bp-memory-create-dialog > p {
+  color: #8c8174;
+  margin-bottom: 25px;
+}
+
+#root .bp-page .bp-memory-create-dialog label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 17px;
+  color: #4d5d53;
+  font-weight: 600;
+}
+
+#root .bp-page .bp-memory-create-dialog input,
+#root .bp-page .bp-memory-create-dialog textarea,
+#root .bp-page .bp-memory-create-dialog select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e1dacf;
+  border-radius: 11px;
+  background: white;
+  color: #26231f;
+}
+
+#root .bp-page .bp-memory-upload-preview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 15px 0;
+}
+
+#root .bp-page .bp-memory-upload-preview img {
+  width: 100%;
+  height: 90px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+#root .bp-page .bp-memory-upload-preview button {
+  margin-top: 5px;
+  border: none;
+  background: transparent;
+  color: #a96560;
+  cursor: pointer;
+}
+
+#root .bp-page .bp-memory-submit {
+  width: 100%;
+  margin-top: 15px;
+}
+
+#root .bp-page .bp-memory-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 700px) {
+  #root .bp-page .bp-memory-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #root .bp-page .bp-memory-filters {
+    justify-content: flex-start;
+  }
+
+  #root .bp-page .bp-memories {
+    grid-template-columns: 1fr;
+  }
+
+  #root .bp-page .bp-memory-gallery img {
+    height: 240px;
+  }
+
+  #root .bp-page .bp-memory-create-dialog {
+    padding: 22px;
+  }
+
+  #root .bp-page .bp-memory-upload-preview {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
